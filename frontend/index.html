@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CarerOS | AI Companion for Caregivers</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="ambient-mesh"></div>
+
+    <!-- MAIN APP WRAPPER -->
+    <div class="app-container" id="app-root">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar glass-panel">
+            <div class="logo">
+                <i class="fa-solid fa-heart-pulse logo-icon"></i>
+                <h2>CarerOS</h2>
+            </div>
+            
+            <nav class="nav-links">
+                <a href="#" class="nav-item active" data-tab="dashboard">
+                    <i class="fa-solid fa-border-all"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="burnout">
+                    <i class="fa-solid fa-battery-half"></i>
+                    <span>Energy Check</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="escalate">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span>Red Flags</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="summary">
+                    <i class="fa-solid fa-file-medical"></i>
+                    <span>Doctor Summary</span>
+                </a>
+            </nav>
+
+            <div class="patient-profile">
+                <img src="https://ui-avatars.com/api/?name=MK&background=0D8ABC&color=fff" alt="Profile" class="avatar">
+                <div class="patient-info">
+                    <span class="patient-name">M. Kumar</span>
+                    <span class="patient-condition">Post-Stroke Care</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="content-area">
+            
+            <!-- HEADER -->
+            <header class="top-nav glass-panel">
+                <div class="greeting">
+                    <h1>Good morning, Priya.</h1>
+                    <p>Here is your Claude AI generated daily care protocol.</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-outline" id="call-doc-btn">
+                        <i class="fa-solid fa-phone"></i> Call Doctor
+                    </button>
+                    <button class="btn btn-primary btn-glow" id="red-flag-header-btn">
+                        <i class="fa-solid fa-bell"></i> Log Red Flag
+                    </button>
+                </div>
+            </header>
+
+            <!-- VIEW: DASHBOARD (Checklist) -->
+            <section id="view-dashboard" class="view-section active">
+                <div class="dashboard-grid">
+                    
+                    <div class="primary-card glass-panel ai-glow">
+                        <div class="card-header">
+                            <div>
+                                <h2>Your Daily Protocol</h2>
+                                <span class="badge badge-ai"><i class="fa-solid fa-robot"></i> AI Validated</span>
+                            </div>
+                            <div class="progress-ring">
+                                <span id="progress-text">0%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="checklist-container" id="checklist-container">
+                            <div class="loading-state">
+                                <i class="fa-solid fa-circle-notch fa-spin"></i> Generating protocol...
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="side-metrics">
+                        <!-- AI Insight Widget -->
+                        <div class="glass-panel insight-widget">
+                            <h3><i class="fa-solid fa-bolt text-warning"></i> AI Care Insight</h3>
+                            <p>M. Kumar’s blood pressure averaged 135/85 this week. Make sure salt intake is reduced today as per the protocol.</p>
+                        </div>
+                        
+                        <!-- Mini Burnout Widget -->
+                        <div class="glass-panel widget-burnout">
+                            <h3>Caregiver Energy</h3>
+                            <div class="energy-bar">
+                                <div class="energy-fill" style="width: 70%;"></div>
+                            </div>
+                            <p class="status-msg">Your last status was "Stable". Time for your weekly check-in.</p>
+                            <button class="btn btn-outline-small mt-2" onclick="switchTab('burnout')">Take Survey</button>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- VIEW: BURNOUT SURVEY -->
+            <section id="view-burnout" class="view-section">
+                <div class="glass-panel modal-panel">
+                    <div class="text-center">
+                        <h2 class="text-gradient">Weekly Energy Check</h2>
+                        <p class="subtitle">Take 30 seconds for yourself. Answer honestly.</p>
+                    </div>
+                    
+                    <form id="burnout-form" class="survey-form">
+                        <div class="question-block">
+                            <label>1. How often did you feel completely drained this week?</label>
+                            <input type="range" class="slide-scale" min="1" max="10" value="5" id="q1">
+                            <div class="scale-labels"><span>Rarely</span><span>Often</span></div>
+                        </div>
+                        <div class="question-block">
+                            <label>2. How often did you skip your own meals or medications?</label>
+                            <input type="range" class="slide-scale" min="1" max="10" value="5" id="q2">
+                            <div class="scale-labels"><span>Never</span><span>Very Often</span></div>
+                        </div>
+                        <div class="question-block">
+                            <label>3. How confident do you feel handling the patient today?</label>
+                            <input type="range" class="slide-scale invert-scale" min="1" max="10" value="5" id="q3">
+                            <!-- Note: Inverted logic in JS later -->
+                            <div class="scale-labels"><span>Very</span><span>Overwhelmed</span></div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-glow full-width">Analyze My Energy</button>
+                    </form>
+
+                    <div id="burnout-result" class="hidden result-box">
+                        <h3 id="burnout-score-display">--</h3>
+                        <p id="burnout-message"></p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: ESCALATE (Red Flags) -->
+            <section id="view-escalate" class="view-section">
+                <div class="glass-panel modal-panel bg-danger-tint">
+                    <div class="text-center">
+                        <h2><i class="fa-solid fa-triangle-exclamation text-danger"></i> Log Red Flag Symptom</h2>
+                        <p class="subtitle">Multi-signal check will automatically escalate to Dr. Sharma if critical.</p>
+                    </div>
+
+                    <form id="escalate-form" class="survey-form">
+                        <div class="input-group">
+                            <label>What symptom are you observing?</label>
+                            <select id="symptom-type" required>
+                                <option value="">Select Symptom...</option>
+                                <option value="Slurred Speech">Slurred Speech or Facial Drooping</option>
+                                <option value="High BP">High Blood Pressure (> 160/100)</option>
+                                <option value="Unresponsive">Unresponsive / Fainting</option>
+                                <option value="Severe Pain">Severe Pain (Level 8+)</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Any additional details?</label>
+                            <textarea id="symptom-details" rows="3" placeholder="He has been unable to lift his left arm since 10am..."></textarea>
+                        </div>
+                        
+                        <div class="action-buttons">
+                            <button type="button" class="btn btn-outline" onclick="switchTab('dashboard')">Cancel</button>
+                            <button type="submit" class="btn btn-danger btn-pulse">Escalate to Doctor</button>
+                        </div>
+                    </form>
+                    
+                    <div id="escalate-result" class="hidden result-box bg-success-tint">
+                        <h3><i class="fa-solid fa-check-circle"></i> Sent Successfully</h3>
+                        <p id="escalate-message"></p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: DOCTOR SUMMARY -->
+            <section id="view-summary" class="view-section">
+                <div class="glass-panel modal-panel text-center">
+                   <h2 class="text-gradient">Doctor's Weekly Summary</h2>
+                   <p class="subtitle mt-1">This report is automatically synthesized from your logs via Claude AI and sent to Dr. Sharma every Sunday.</p>
+                   
+                   <div class="mock-phone mt-4">
+                       <div class="whatsapp-header">
+                           <i class="fa-brands fa-whatsapp"></i> Chat: Dr. Sharma
+                       </div>
+                       <div class="whatsapp-body" id="whatsapp-message">
+                           <div class="loading-state text-sm">
+                                <i class="fa-solid fa-circle-notch fa-spin"></i> Generating AI Summary...
+                            </div>
+                       </div>
+                   </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast hidden">
+        <i class="fa-solid fa-circle-info"></i> <span id="toast-msg">Action successful</span>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
