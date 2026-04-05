@@ -31,6 +31,11 @@ checklists = {
 
 patient_logs = []
 
+community_posts = [
+    {'author': 'Sarah L.', 'time': '2 hours ago', 'content': 'My dad keeps refusing to take his donepezil because he thinks it is poisonous. Any tips?'},
+    {'author': 'Rahul G.', 'time': '5 hours ago', 'content': 'I am so exhausted juggling my job and caring for my wife post-stroke. Just needed to vent.'}
+]
+
 class CarerOSBackendAPI(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         # Serve files from the frontend directory
@@ -62,6 +67,9 @@ class CarerOSBackendAPI(http.server.SimpleHTTPRequestHandler):
             self._set_headers()
             summary = "Patient Adherence: 85%. \nKey Events: Mild nausea reported on Tuesday. BP stable (avg 125/78).\nCaregiver Status: Stable (Burnout Score 4/10)."
             self.wfile.write(json.dumps({'success': True, 'summary': summary}).encode())
+        elif parsed_path.path == '/api/community':
+            self._set_headers()
+            self.wfile.write(json.dumps({'success': True, 'posts': community_posts}).encode())
         else:
             # Fall back to serving static files from the frontend directory
             super().do_GET()
@@ -99,6 +107,13 @@ class CarerOSBackendAPI(http.server.SimpleHTTPRequestHandler):
             patient_logs.append({'timestamp': time.time(), 'items': items})
             self._set_headers()
             self.wfile.write(json.dumps({'success': True, 'count': len(patient_logs)}).encode())
+            
+        elif parsed_path.path == '/api/community':
+            content = body.get('content', '')
+            post = {'author': 'You', 'time': 'Just now', 'content': content}
+            community_posts.insert(0, post) # inject at top
+            self._set_headers()
+            self.wfile.write(json.dumps({'success': True, 'post': post}).encode())
             
         else:
             self.send_error(404, "Not Found")

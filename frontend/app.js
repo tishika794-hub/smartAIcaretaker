@@ -56,6 +56,8 @@ function switchTab(tabId) {
 
     if(tabId === 'summary') {
         fetchDoctorSummary();
+    } else if (tabId === 'community') {
+        fetchCommunityPosts();
     }
 }
 
@@ -202,6 +204,32 @@ function setupForms() {
     document.getElementById('red-flag-header-btn').addEventListener('click', () => {
         switchTab('escalate');
     });
+
+    // Community Form
+    document.getElementById('community-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const content = document.getElementById('community-post-content').value;
+        const btn = e.target.querySelector('button');
+        btn.innerText = "Sharing...";
+        
+        try {
+            const res = await fetch(`${API_BASE}/community`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content })
+            });
+            const data = await res.json();
+            
+            if(data.success) {
+                document.getElementById('community-post-content').value = '';
+                fetchCommunityPosts();
+                showToast("Problem shared with community!");
+            }
+        } catch(err) {
+            showToast("Failed to post issue", true);
+        }
+        btn.innerText = "Share Problem";
+    });
 }
 
 async function fetchDoctorSummary() {
@@ -218,6 +246,32 @@ async function fetchDoctorSummary() {
         }
     } catch(err) {
         box.innerHTML = `<div class="msg-bubble text-danger">Cloud AI unreachable. Check server connection.</div>`;
+    }
+}
+
+async function fetchCommunityPosts() {
+    const feed = document.getElementById('community-feed');
+    feed.innerHTML = `<div class="loading-state text-sm"><i class="fa-solid fa-circle-notch fa-spin"></i> Loading community posts...</div>`;
+    try {
+        const res = await fetch(`${API_BASE}/community`);
+        const data = await res.json();
+        
+        if (data.success && data.posts) {
+            feed.innerHTML = '';
+            data.posts.forEach(post => {
+                feed.innerHTML += `
+                    <div class="msg-bubble" style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); width: 100%; text-align: left;">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                            <strong style="color:var(--text-light);"><i class="fa-solid fa-user"></i> ${post.author}</strong>
+                            <small style="color:rgba(255,255,255,0.5);">${post.time}</small>
+                        </div>
+                        <div style="color: #fff;">${post.content}</div>
+                    </div>
+                `;
+            });
+        }
+    } catch(err) {
+        feed.innerHTML = `<div class="text-danger p-4">Could not load posts.</div>`;
     }
 }
 

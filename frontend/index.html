@@ -42,6 +42,10 @@
                     <i class="fa-solid fa-file-medical"></i>
                     <span>Doctor Summary</span>
                 </a>
+                <a href="#" class="nav-item" data-tab="community">
+                    <i class="fa-solid fa-users"></i>
+                    <span>Community</span>
+                </a>
             </nav>
 
             <div class="patient-profile">
@@ -205,6 +209,29 @@
                             </div>
                        </div>
                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: COMMUNITY -->
+            <section id="view-community" class="view-section">
+                <div class="glass-panel modal-panel">
+                    <div class="text-center">
+                        <h2 class="text-gradient"><i class="fa-solid fa-users"></i> Caretaker Community</h2>
+                        <p class="subtitle">Share your problems, ask for advice, or just vent. You are not alone.</p>
+                    </div>
+                    
+                    <form id="community-form" class="survey-form">
+                        <div class="input-group mt-2">
+                            <textarea id="community-post-content" rows="3" placeholder="I'm struggling with..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-glow full-width text-center">Share Problem</button>
+                    </form>
+
+                    <div id="community-feed" class="mt-4" style="display:flex; flex-direction:column; gap:15px; margin-top:20px;">
+                        <div class="loading-state text-sm">
+                            <i class="fa-solid fa-circle-notch fa-spin"></i> Loading community posts...
+                        </div>
+                    </div>
                 </div>
             </section>
 
