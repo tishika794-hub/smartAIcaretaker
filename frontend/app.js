@@ -260,12 +260,12 @@ async function fetchCommunityPosts() {
             feed.innerHTML = '';
             data.posts.forEach(post => {
                 feed.innerHTML += `
-                    <div class="msg-bubble" style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); width: 100%; text-align: left;">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-                            <strong style="color:var(--text-light);"><i class="fa-solid fa-user"></i> ${post.author}</strong>
-                            <small style="color:rgba(255,255,255,0.5);">${post.time}</small>
+                    <div class="community-post">
+                        <div class="community-post-header">
+                            <span class="community-post-author"><i class="fa-solid fa-user"></i> ${post.author}</span>
+                            <span class="community-post-time">${post.time}</span>
                         </div>
-                        <div style="color: #fff;">${post.content}</div>
+                        <div class="community-post-content">${post.content}</div>
                     </div>
                 `;
             });
