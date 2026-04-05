@@ -3,8 +3,9 @@ import socketserver
 import json
 import urllib.parse
 import time
+import os
 
-PORT = 8000
+PORT = int(os.environ.get('PORT', 8000))
 
 checklists = {
     'stroke': [
@@ -31,6 +32,11 @@ checklists = {
 patient_logs = []
 
 class CarerOSBackendAPI(http.server.SimpleHTTPRequestHandler):
+    def __init__(self, *args, **kwargs):
+        # Serve files from the frontend directory
+        frontend_dir = os.path.join(os.path.dirname(__file__), '..', 'frontend')
+        super().__init__(*args, directory=frontend_dir, **kwargs)
+
     def _set_headers(self, status=200):
         self.send_response(status)
         self.send_header('Content-Type', 'application/json')
@@ -57,7 +63,8 @@ class CarerOSBackendAPI(http.server.SimpleHTTPRequestHandler):
             summary = "Patient Adherence: 85%. \nKey Events: Mild nausea reported on Tuesday. BP stable (avg 125/78).\nCaregiver Status: Stable (Burnout Score 4/10)."
             self.wfile.write(json.dumps({'success': True, 'summary': summary}).encode())
         else:
-            self.send_error(404, "Not Found")
+            # Fall back to serving static files from the frontend directory
+            super().do_GET()
 
     def do_POST(self):
         parsed_path = urllib.parse.urlparse(self.path)
